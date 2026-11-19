@@ -30,16 +30,45 @@ With vim-plug:
 Plug '/media/dev/newsprint'
 ```
 
-or put the repository on the runtime path, or copy `colors/newsprint.lua` into
-`~/.config/nvim/colors/`. Then:
+or put the repository on the runtime path, or symlink (or copy) the files in
+`colors/` into `~/.config/nvim/colors/`: the variants load `newsprint.lua`
+from their own directory. Then, in `~/.config/nvim/init.vim`:
 
 ```vim
-set background=light   " morning edition: ink on newsprint (dark: night edition)
-colorscheme newsprint
+set background=light       " morning edition: ink on newsprint (dark: night edition)
+colorscheme newsprint      " or one of the variants below
 ```
 
 `:hi` commands that come after `colorscheme` in your config override the
 theme; drop any `CursorLine`/`ColorColumn`/`MatchParen` overrides.
+
+## Variants
+
+Each is its own colorscheme, so `:colorscheme newsprint<Tab>` cycles through
+them:
+
+| `:colorscheme` | |
+|---|---|
+| `newsprint` | black & white |
+| `newsprint-duotone` | slate keywords, rosewood numbers and constants, comments in sidebars |
+| `newsprint-sunday` | duotone, plus sage strings and ochre preprocessor |
+| `newsprint-duotone-faded` | `newsprint-duotone` in the original, more muted slate and rosewood |
+| `newsprint-sunday-faded` | `newsprint-sunday` in the original, more muted slate and rosewood |
+
+![newsprint-sunday](screenshots/variant-newsprint-sunday.png)
+
+Screenshots of every variant on the same code:
+[newsprint](screenshots/variant-newsprint.png),
+[duotone-faded](screenshots/variant-newsprint-duotone-faded.png),
+[duotone](screenshots/variant-newsprint-duotone.png),
+[sunday-faded](screenshots/variant-newsprint-sunday-faded.png),
+[sunday](screenshots/variant-newsprint-sunday.png),
+[sunday at night](screenshots/variant-newsprint-sunday-night.png),
+[sunday on truecolor with tree-sitter](screenshots/variant-newsprint-sunday-truecolor.png).
+
+Your `g:newsprint` options (below) still apply to a variant, except the ones
+the variant sets itself, so `let g:newsprint = {'accent': 'red'}` with
+`colorscheme newsprint-sunday` gives the Sunday edition with the red pencil.
 
 ## Options
 
@@ -52,6 +81,7 @@ vim.g.newsprint = {
   warm        = true,       -- warm newsprint paper (truecolor only)
   transparent = false,      -- keep the terminal's own background
   inks        = 'black',    -- 'duotone' or 'sunday': muted tinted inks
+  faded       = false,      -- the original, more muted slate and rosewood
   comments    = 'caption',  -- 'sidebar': comments in a shaded box
   accent      = false,      -- 'red' or 'desk': spot colour for events
 }
@@ -75,14 +105,11 @@ inks over the black. Headlines and the UI stay black & white.
 | Sidebar box (`comments = 'sidebar'`) | comments: dark grey italic on the lightest screen | `254` #e4e4e4 | `235` #262626 |
 
 `inks = 'duotone'` is slate and rosewood; `'sunday'` adds sage and ochre.
+`faded = true` restores the original, more muted slate and rosewood, one step
+down the colour cube: `60` #5f5f87 and `95` #875f5f (night: `103` #8787af and
+`138` #af8787).
 
-![inks = 'duotone', comments = 'sidebar'](screenshots/inks-duotone-sidebar.png)
-![inks = 'sunday', comments = 'sidebar'](screenshots/inks-sunday-sidebar.png)
-![The same in the night edition](screenshots/inks-sunday-sidebar-night.png)
-
-More: [black](screenshots/inks-black.png),
-[duotone without sidebars](screenshots/inks-duotone.png),
-[truecolor with tree-sitter](screenshots/inks-sunday-sidebar-truecolor.png),
+More: [duotone without sidebars](screenshots/inks-duotone.png),
 [how bright the inks should be](screenshots/inks-brightness-compare.png).
 
 ### Spot colour
@@ -171,7 +198,7 @@ tools/render.py tools/scenes/c_add.lua /tmp/c.png               # as urxvt shows
 NP_OPTS="{ inks = 'sunday' }" tools/render.py tools/scenes/inks.lua /tmp/i.png --bg dark
 tools/make-screenshots.sh                                        # rebuild screenshots/
 nvim --headless -u NONE -i NONE --cmd 'set rtp^=.' \
-     -c 'luafile tools/check-options.lua' -c 'qa!'               # every option combination
+     -c 'luafile tools/check-options.lua' -c 'qa!'               # every option and variant
 ```
 
 The C scenes open `drivers/block/zram` from a kernel tree (`NP_LINUX`,

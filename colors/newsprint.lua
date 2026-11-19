@@ -21,6 +21,14 @@
 --   :set background=light   morning edition: ink on newsprint   (default)
 --   :set background=dark    night edition:   newsprint on ink
 --
+-- Variants, each its own :colorscheme (colors/newsprint-*.lua):
+--
+--   newsprint                 black & white
+--   newsprint-duotone         slate keywords, rosewood figures; comments boxed
+--   newsprint-sunday          ...plus sage strings and ochre preprocessor
+--   newsprint-duotone-faded   the same two, in the original, more muted
+--   newsprint-sunday-faded      slate and rosewood
+--
 -- Options (all optional; set them before :colorscheme):
 --
 --   vim.g.newsprint = {
@@ -29,15 +37,25 @@
 --     warm        = true,   -- warm newsprint paper (truecolor only)
 --     transparent = false,  -- keep the terminal's own background
 --     inks        = 'black',   -- 'black', 'duotone' or 'sunday': "Tinted inks"
+--     faded       = false,     -- the original, more muted slate and rosewood
 --     comments    = 'caption', -- 'caption' (grey italic) or 'sidebar' (boxed)
 --     accent      = false,  -- false, 'red' or 'desk': see "Spot colour"
 --   }
+--
+-- A variant's own settings win over these; everything else still applies,
+-- e.g. { accent = 'red' } with :colorscheme newsprint-sunday.
+
+-- A variant hands its name and settings over in g:newsprint_variant.
+local variant = vim.g.newsprint_variant or {}
+vim.g.newsprint_variant = nil
+local name = variant.name or 'newsprint'
+variant.name = nil
 
 vim.cmd('highlight clear')
 if vim.fn.exists('syntax_on') == 1 then
   vim.cmd('syntax reset')
 end
-vim.g.colors_name = 'newsprint'
+vim.g.colors_name = name
 
 local opt = vim.tbl_extend('force', {
   bold = true,
@@ -45,9 +63,10 @@ local opt = vim.tbl_extend('force', {
   warm = true,
   transparent = false,
   inks = 'black',
+  faded = false,
   comments = 'caption',
   accent = false,
-}, vim.g.newsprint or {})
+}, vim.g.newsprint or {}, variant)
 
 -- The page ------------------------------------------------------------------
 --
@@ -88,7 +107,14 @@ local editions = {
   },
 }
 
-local edition = editions[vim.o.background == 'dark' and 'dark' or 'light']
+-- The original, more muted slate and rosewood: one step down the colour cube.
+local faded = {
+  light = { slate = 60, rosewood = 95 },
+  dark = { slate = 103, rosewood = 138 },
+}
+
+local bg = vim.o.background == 'dark' and 'dark' or 'light'
+local edition = vim.tbl_extend('force', editions[bg], opt.faded and faded[bg] or {})
 
 local cube = { 0, 95, 135, 175, 215, 255 }
 

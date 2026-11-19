@@ -31,12 +31,11 @@ desk desk-night     "{ accent = 'desk' }" --bg dark
 desk desk-truecolor "{ accent = 'desk' }" --mode gui
 NP_OPTS="{ accent = 'desk' }" $R scenes/patch.lua $OUT/accent-desk-patch.png --rows 66 --no-cursor
 
-# Tinted inks: inks = 'duotone' / 'sunday', comments = 'sidebar'
-inks() { NP_OPTS="$2" $R scenes/inks.lua "$OUT/inks-$1.png" --rows 62 --cols 100 --no-cursor "${@:3}"; }
-inks black                "{}"
-inks duotone              "{ inks = 'duotone' }"
-inks duotone-sidebar      "{ inks = 'duotone', comments = 'sidebar' }"
-inks sunday-sidebar       "{ inks = 'sunday', comments = 'sidebar' }"
-inks sunday-sidebar-night "{ inks = 'sunday', comments = 'sidebar' }" --bg dark
-NP_TS=1 NP_OPTS="{ inks = 'sunday', comments = 'sidebar' }" \
-  $R scenes/inks.lua $OUT/inks-sunday-sidebar-truecolor.png --mode gui --rows 50 --cols 100 --no-cursor
+# Variants (:colorscheme newsprint-*); tinted inks without sidebars
+for v in newsprint newsprint-duotone-faded newsprint-duotone newsprint-sunday-faded newsprint-sunday; do
+  NP_SCHEME=$v $R scenes/inks.lua "$OUT/variant-$v.png" --rows 62 --cols 100 --no-cursor
+done
+NP_SCHEME=newsprint-sunday $R scenes/inks.lua $OUT/variant-newsprint-sunday-night.png --bg dark --rows 62 --cols 100 --no-cursor
+NP_TS=1 NP_SCHEME=newsprint-sunday \
+  $R scenes/inks.lua $OUT/variant-newsprint-sunday-truecolor.png --mode gui --rows 50 --cols 100 --no-cursor
+NP_OPTS="{ inks = 'duotone' }" $R scenes/inks.lua $OUT/inks-duotone.png --rows 62 --cols 100 --no-cursor

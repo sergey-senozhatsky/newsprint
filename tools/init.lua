@@ -52,5 +52,5 @@ local opts = os.getenv('NP_OPTS')  -- a Lua table literal, e.g. "{ inks = 'sunda
 if opts and opts ~= '' then
   vim.g.newsprint = loadstring('return ' .. opts)()
 end
-vim.cmd('colorscheme newsprint')
+vim.cmd('colorscheme ' .. (os.getenv('NP_SCHEME') or 'newsprint'))
 vim.cmd([[match LeadingWS /\(\t \{1,}[^*(! ]\)\|\( \{1,}$\)\|\(^ \)/]])
