@@ -24,15 +24,19 @@ the paper also gets a faint newsprint warmth.
 
 ## Install
 
-With vim-plug:
+Get the repository onto the machine, e.g. `git clone` to `~/src/newsprint`,
+then pick one:
 
-```vim
-Plug '/media/dev/newsprint'
-```
+* **vim-plug**: add `Plug '~/src/newsprint'` between `plug#begin()` and
+  `plug#end()`. It's a local path, so there's nothing to `:PlugInstall`.
+* **Neovim's own packages**, no plugin manager: clone straight into
+  `~/.local/share/nvim/site/pack/newsprint/start/newsprint`, which is loaded
+  automatically.
+* **Just the files**: symlink or copy everything in `colors/` into
+  `~/.config/nvim/colors/`. Keep all of them together, because the variants
+  load `newsprint.lua` from their own directory.
 
-or put the repository on the runtime path, or symlink (or copy) the files in
-`colors/` into `~/.config/nvim/colors/`: the variants load `newsprint.lua`
-from their own directory. Then, in `~/.config/nvim/init.vim`:
+Then, in `~/.config/nvim/init.vim`:
 
 ```vim
 set background=light       " morning edition: ink on newsprint (dark: night edition)
@@ -40,7 +44,8 @@ colorscheme newsprint      " or one of the variants below
 ```
 
 `:hi` commands that come after `colorscheme` in your config override the
-theme; drop any `CursorLine`/`ColorColumn`/`MatchParen` overrides.
+theme; drop any `CursorLine`/`ColorColumn`/`MatchParen` overrides. Tested
+with Neovim 0.11.
 
 ## Variants
 
