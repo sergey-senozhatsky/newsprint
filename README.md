@@ -126,6 +126,11 @@ up a proof, with the tools on an editor's desk.
 `accent = 'red'` is the red pencil alone, a newspaper's classic second colour;
 `accent = 'desk'` adds the highlighter and the blue pencil.
 
+To switch at runtime, use `:NewsprintAccent red`, `:NewsprintAccent desk` or
+`:NewsprintAccent none`. With no argument it cycles through the three. It
+keeps the current variant and your other options, and the choice survives
+`:set background`.
+
 ![accent = 'desk'](screenshots/accent-desk.png)
 
 More: [black & white](screenshots/accent-none.png),

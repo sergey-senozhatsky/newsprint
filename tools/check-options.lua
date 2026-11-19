@@ -76,6 +76,39 @@ try('personal options on top of a variant', function()
   vim.g.newsprint = nil
 end)
 
+-- :NewsprintAccent switches in place, keeps the variant and the other
+-- options, cycles without an argument, and refuses nonsense.
+try(':NewsprintAccent', function()
+  vim.o.background = 'light'
+  vim.g.newsprint = { italic = false }
+  vim.cmd('colorscheme newsprint-sunday')
+  local function state()
+    return string.format('%s %s/%s/%s %s', vim.g.colors_name, c('ErrorMsg', 'ctermbg'),
+      c('Search', 'ctermbg'), c('Statement', 'ctermfg'), tostring(c('Comment', 'italic')))
+  end
+  local function expect(want)
+    assert(state() == want, 'want ' .. want .. ', got ' .. state())
+  end
+  vim.cmd('silent NewsprintAccent red')
+  expect('newsprint-sunday 124/250/61 nil')
+  vim.cmd('silent NewsprintAccent')
+  expect('newsprint-sunday 124/229/61 nil')
+  vim.o.background = 'dark'
+  expect('newsprint-sunday 167/178/104 nil')
+  vim.o.background = 'light'
+  vim.cmd('silent NewsprintAccent')
+  expect('newsprint-sunday 235/250/61 nil')
+  local notify = vim.notify
+  local complained = false
+  vim.notify = function() complained = true end
+  vim.cmd('NewsprintAccent purple')
+  vim.notify = notify
+  assert(complained, 'no error for a bad accent')
+  expect('newsprint-sunday 235/250/61 nil')
+  assert(table.concat(vim.fn.getcompletion('NewsprintAccent ', 'cmdline'), ',') == 'none,red,desk')
+  vim.g.newsprint = nil
+end)
+
 io.stdout:write(string.format('%d checks, %d failures\n', n, #fails))
 for _, f in ipairs(fails) do
   io.stdout:write('  ' .. f .. '\n')

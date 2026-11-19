@@ -690,3 +690,27 @@ local ansi = {
 for i, role in ipairs(ansi) do
   vim.g['terminal_color_' .. (i - 1)] = hex(edition[role])
 end
+
+-- :NewsprintAccent [none|red|desk] switches the spot colour in place; with no
+-- argument it cycles none -> red -> desk.  The choice is kept in g:newsprint
+-- (your other options stay), so it survives :set background and :colorscheme.
+vim.api.nvim_create_user_command('NewsprintAccent', function(cmd)
+  local o = vim.g.newsprint or {}
+  local now = o.accent == true and 'desk' or o.accent or 'none'
+  local want = cmd.args ~= '' and cmd.args or ({ none = 'red', red = 'desk', desk = 'none' })[now]
+  if not ({ none = true, red = true, desk = true })[want] then
+    vim.notify('NewsprintAccent: expected none, red or desk', vim.log.levels.ERROR)
+    return
+  end
+  o.accent = want ~= 'none' and want or false
+  vim.g.newsprint = o
+  local scheme = (vim.g.colors_name or ''):match('^newsprint') and vim.g.colors_name or 'newsprint'
+  vim.cmd.colorscheme(scheme)
+  vim.api.nvim_echo({ { 'newsprint: accent ' .. want } }, false, {})
+end, {
+  nargs = '?',
+  complete = function()
+    return { 'none', 'red', 'desk' }
+  end,
+  desc = 'newsprint: switch the spot colour (none, red, desk)',
+})
