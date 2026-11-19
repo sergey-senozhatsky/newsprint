@@ -1,0 +1,29 @@
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Alex Writer <alex@example.org>
+Cc: Robin Reviewer <robin@example.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] zram: introduce writeback batch size
+In-Reply-To: <20261117083012.1234-3-alex@example.org>
+
+On (26/11/17 17:30), Alex Writer wrote:
+> On Mon, Nov 17, 2026 at 3:12 AM Sergey Senozhatsky wrote:
+> > On (26/11/14 10:02), Alex Writer wrote:
+> > > Writeback currently submits one bio per page, which is slow on
+> > > devices that prefer larger requests.
+> >
+> > Do we really need a knob for this?  Can't we just pick a sane
+> > default?
+>
+> Different backing devices want different sizes, so I'd rather keep
+> it configurable.
+
+Fair enough.  A couple of nits below.
+
+> +	if (kstrtouint(buf, 10, &val) || !val)
+> +		return -EINVAL;
+
+Let's cap it at some reasonable value, otherwise userspace can ask
+for a ridiculusly large batch.  See https://docs.kernel.org/admin-guide/blockdev/zram.html
+
+-- 
+Sergey

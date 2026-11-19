@@ -1,0 +1,24 @@
+zram: drop redundant slot locking in zram_write_page() error path
+
+zram_write_page() takes the slot lock only to release it immediatly
+when zs_store() fails.  The slot is not published at that point, so
+nobody else can observe it; drop the lock/unlock pair.
+
+No functional change intended.
+
+Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch zram-next
+# Your branch is ahead of 'origin/master' by 2 commits.
+#
+# Changes to be committed:
+#	modified:   drivers/block/zram/zram_drv.c
+#
+# Changes not staged for commit:
+#	modified:   mm/zsmalloc.c
+#
+# Untracked files:
+#	0001-zram-fix-quadratic-writeback-bitmap-search.patch
+#
